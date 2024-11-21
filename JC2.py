@@ -108,8 +108,14 @@ def load_models(model_path, dtype, device="cuda:0", device_map=None):
     JC_lora = "text_model"
     use_lora = True if JC_lora != "none" else False
     CLIP_PATH = os.path.join(folder_paths.models_dir, "clip_vision", "google--siglip-so400m-patch14-384")
+    if not os.path.exists(CLIP_PATH) and os.path.exists(folder_paths.cache_dir):
+        CLIP_PATH = '/stable-diffusion-cache/models/clip/siglip-so400m-patch14-384'
     CHECKPOINT_PATH = os.path.join(folder_paths.models_dir, "Joy_caption", "cgrkzexw-599808")
+    if not os.path.exists(CHECKPOINT_PATH) and os.path.exists(folder_paths.cache_dir):
+        CHECKPOINT_PATH = os.path.join(folder_paths.cache_dir, "Joy_caption", "cgrkzexw-599808")
     LORA_PATH = os.path.join(CHECKPOINT_PATH, "text_model")
+    if not os.path.exists(LORA_PATH) and os.path.exists(folder_paths.cache_dir):
+        LORA_PATH = '/stable-diffusion-cache/models/Joy_caption_alpha/text_model'
 
     if os.path.exists(CLIP_PATH):
         print("Start to load existing VLM")
@@ -772,6 +778,8 @@ class JoyCaption2_simple:
         sanitized_model_name = llm_model.replace('/', '--')
         llm_model_path = os.path.join(comfy_model_dir, sanitized_model_name)  
         llm_model_path_cache = os.path.join(comfy_model_dir, "cache--" + sanitized_model_name)
+        if not os.path.exists(llm_model_path) and os.path.exists(os.path.join(folder_paths.cache_dir, "LLM", llm_model.split('/')[-1])):
+            llm_model_path = os.path.join(folder_paths.cache_dir, "LLM", llm_model.split('/')[-1])
 
         # 使用用户选择的设备
         selected_device = device if torch.cuda.is_available() else 'cpu'
