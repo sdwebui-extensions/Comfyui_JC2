@@ -536,6 +536,9 @@ class JoyCaption2:
         sanitized_model_name = llm_model.replace('/', '--')
         llm_model_path = os.path.join(comfy_model_dir, sanitized_model_name)  
         llm_model_path_cache = os.path.join(comfy_model_dir, "cache--" + sanitized_model_name)
+        if not os.path.exists(llm_model_path):
+            if os.path.exists(os.path.join(folder_paths.cache_dir, "LLM", llm_model.split('/')[-1])):
+                llm_model_path = os.path.join(folder_paths.cache_dir, "LLM", llm_model.split('/')[-1])
 
         # 使用用户选择的设备
         selected_device = device if torch.cuda.is_available() else 'cpu'
