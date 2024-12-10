@@ -207,7 +207,10 @@ def load_models(model_path, dtype, device="cuda:0", device_map=None):
             clip_model.eval().requires_grad_(False).to(current_device)
 
             print("Loading tokenizer")
-            tokenizer = AutoTokenizer.from_pretrained(os.path.join(CHECKPOINT_PATH, "text_model"), use_fast=True)
+            try:
+                tokenizer = AutoTokenizer.from_pretrained(os.path.join(CHECKPOINT_PATH, "text_model"), use_fast=True)
+            except:
+                tokenizer = AutoTokenizer.from_pretrained(CHECKPOINT_PATH, use_fast=True)
             assert isinstance(tokenizer, (PreTrainedTokenizer, PreTrainedTokenizerFast)), f"Tokenizer is of type {type(tokenizer)}"
 
             print(f"Loading LLM: {model_path}")
