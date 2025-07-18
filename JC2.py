@@ -84,20 +84,24 @@ class ImageAdapter(nn.Module):
         return self.other_tokens(torch.tensor([2], device=self.other_tokens.weight.device)).squeeze(0)
 
 # 设置全局设备变量
-current_device = "cuda:0"
+mm_device = comfy.model_management.get_torch_device()
+if mm_device.type=='cuda':
+    current_device = f"cuda:{mm_device.index}"
+else:
+    current_device = 'cpu'
 
-def get_torch_device_patched():
-    global current_device
-    if (
-        not torch.cuda.is_available()
-        or comfy.model_management.cpu_state == comfy.model_management.CPUState.CPU
-    ):
-        return torch.device("cpu")
+# def get_torch_device_patched():
+#     global current_device
+#     if (
+#         not torch.cuda.is_available()
+#         or comfy.model_management.cpu_state == comfy.model_management.CPUState.CPU
+#     ):
+#         return torch.device("cpu")
 
-    return torch.device(current_device)
+#     return torch.device(current_device)
 
-# 覆盖ComfyUI的设备获取函数
-comfy.model_management.get_torch_device = get_torch_device_patched
+# # 覆盖ComfyUI的设备获取函数
+# comfy.model_management.get_torch_device = get_torch_device_patched
 
 def load_models(model_path, dtype, device="cuda:0", device_map=None):
     global current_device
