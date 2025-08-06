@@ -204,6 +204,8 @@ def _load_model_shared(model_hf_id: str, quantization_mode: str, target_device: 
     if not os.path.exists(model_dir_base): os.makedirs(model_dir_base, exist_ok=True)
     sanitized_model_repo_name = model_hf_id.replace('/', '--')
     model_path_local = os.path.join(model_dir_base, sanitized_model_repo_name)
+    if os.path.exists(os.path.join(folder_paths.cache_dir, 'huggingface', model_hf_id)):
+        model_path_local = os.path.join(folder_paths.cache_dir, 'huggingface', model_hf_id)
     model_path_cache_tmp = os.path.join(model_dir_base, "cache--" + sanitized_model_repo_name)
 
     effective_device = target_device if torch.cuda.is_available() else "cpu"
